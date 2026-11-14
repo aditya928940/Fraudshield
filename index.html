@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_standard" name="shell-type"/>
+<title>FraudShield - Check if a message is a scam</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="js/tailwind-config.js"></script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TOP NAVIGATION BAR -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-surface-container/60 shadow-[0_1px_8px_rgba(0,0,0,0.03)] transition-all duration-300">
+<div class="h-16 max-w-[1240px] mx-auto px-gutter flex items-center justify-between">
+<div class="flex items-center gap-space-lg">
+<a class="flex items-center gap-space-xs group" href="#upload">
+<div class="w-9 h-9 rounded-lg bg-primary text-on-primary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Fraud<span class="text-primary font-bold">Shield</span></span>
+</a>
+<nav class="hidden lg:flex items-center gap-1 text-on-surface-variant font-label-lg text-label-lg">
+<a class="px-space-md py-space-sm rounded-lg hover:text-primary hover:bg-surface-container transition-colors" href="#upload">Check a Screenshot</a>
+<a class="px-space-md py-space-sm rounded-lg hover:text-primary hover:bg-surface-container transition-colors" href="#how-it-works">How It Works</a>
+<a class="px-space-md py-space-sm rounded-lg hover:text-primary hover:bg-surface-container transition-colors" href="#common-scams">Common Scams</a>
+<a class="px-space-md py-space-sm rounded-lg hover:text-primary hover:bg-surface-container transition-colors" href="#safety-tips">Safety Tips</a>
+<a class="px-space-md py-space-sm rounded-lg hover:text-primary hover:bg-surface-container transition-colors" href="#faq">Help &amp; FAQ</a>
+</nav>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center rounded-lg border border-outline-variant/40 bg-surface-container-low p-0.5" id="lang-switch" role="group" aria-label="Language">
+<button aria-pressed="true" class="lang-btn active" data-lang="en" type="button">EN</button>
+<button aria-pressed="false" class="lang-btn" data-lang="hn" type="button">Hinglish</button>
+<button aria-pressed="false" class="lang-btn" data-lang="hi" type="button">हिन्दी</button>
+</div>
+<a class="px-space-md py-1.5 rounded-lg font-label-md text-label-md text-on-error bg-error hover:bg-error/90 shadow-sm transition-all flex items-center gap-1" href="#emergency">
+<span class="material-symbols-outlined text-[16px]">emergency_home</span>
+<span class="hidden sm:inline">Fell for a Scam?</span>
+</a>
+</div>
+</div>
+</header>
+<main class="w-full pt-16 bg-surface min-h-screen">
+<!-- SECTION 1: HERO & CORE UPLOAD -->
+<div class="relative w-full overflow-hidden" id="upload">
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[360px] bg-gradient-to-b from-primary-fixed/30 via-surface-container-high/40 to-transparent blur-3xl pointer-events-none rounded-full"></div>
+<div class="absolute top-96 right-8 w-80 h-80 bg-secondary-fixed/25 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-[500px] left-6 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<section class="relative max-w-[1240px] mx-auto px-gutter pt-space-lg pb-space-xl">
+<div class="flex flex-col items-center text-center max-w-3xl mx-auto">
+<!-- Live Alert Badge -->
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-primary/10 text-primary border border-primary/20 mb-space-md shadow-xs">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Free Scam Check • Instant Results</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-extrabold mb-space-sm">
+            Something feels off? <br class="hidden sm:inline"/>
+<span class="text-primary font-bold">Check it before you tap.</span>
+</h1>
+<!-- Subtitle -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-space-xl">
+            Upload or paste any message that feels suspicious. We show you the tricks the scammer is using and explain them in simple words.
+          </p>
+</div>
+<!-- Core Interactive Card -->
+<div class="max-w-[860px] mx-auto bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container p-space-md md:p-space-lg relative z-10">
+<!-- Dropzone -->
+<div class="relative group cursor-pointer rounded-xl bg-surface border-2 border-dashed border-outline-variant hover:border-primary p-space-lg md:p-space-xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:bg-primary-fixed-dim/10" id="dropzone">
+<input accept="image/png,image/jpeg,image/webp" aria-label="Upload suspicious screenshot" class="sr-only" id="file-input" type="file"/>
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 shadow-sm mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">
+              Drop your screenshot here or <span class="text-primary underline underline-offset-4 decoration-primary/40 group-hover:decoration-primary">click to browse</span>
+</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+              Supports PNG, JPG, WEBP • Max 20MB
+            </p>
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/30">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">encrypted</span>
+<span>Tip: hide or crop card numbers and OTPs before uploading</span>
+</div>
+</div>
+<!-- Staged Image Preview (Hidden by default, shown on upload/sample) -->
+<div class="hidden mt-space-md bg-surface border border-outline-variant/40 rounded-lg p-space-md flex-col md:flex-row gap-space-md items-center justify-between" id="preview-panel">
+<div class="flex items-center gap-space-md">
+<div class="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden flex items-center justify-center flex-shrink-0 shadow-sm border border-surface-container" id="thumbnail-box">
+<img alt="Screenshot preview" class="w-full h-full object-cover" id="preview-img" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20fill='%23e6f4f1'/%3E%3Cpath%20d='M14%2016h36a4%204%200%200%201%204%204v20a4%204%200%200%201-4%204H30l-10%208v-8h-6a4%204%200%200%201-4-4V20a4%204%200%200%201%204-4z'%20fill='%230d9488'/%3E%3Crect%20x='18'%20y='24'%20width='28'%20height='3'%20rx='1.5'%20fill='%23fff'/%3E%3Crect%20x='18'%20y='31'%20width='20'%20height='3'%20rx='1.5'%20fill='%23fff'/%3E%3C/svg%3E"/>
+</div>
+<div class="flex flex-col text-left">
+<span class="font-label-lg text-label-lg text-on-surface font-bold truncate max-w-[220px] sm:max-w-xs" id="preview-filename">suspicious_text_alert.png</span>
+<span class="font-body-sm text-body-sm text-primary flex items-center gap-1 font-medium" id="preview-status">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Ready to check
+                </span>
+</div>
+</div>
+<button class="font-label-sm text-label-sm text-on-surface-variant hover:text-error transition-colors flex items-center gap-1 self-end md:self-center px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-error-container/40" id="clear-preview-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span> Remove
+            </button>
+</div>
+<!-- Quick Paste Bar & Scan Trigger -->
+<div class="mt-space-md pt-space-xs flex flex-col sm:flex-row items-center justify-between gap-space-md border-t border-surface-container-low">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm w-full sm:w-auto">
+<span class="material-symbols-outlined text-[18px] text-tertiary">content_paste</span>
+<span>Have it copied? Press <kbd class="px-1.5 py-0.5 rounded bg-surface-container border border-outline-variant/40 font-mono text-[11px] text-on-surface font-semibold">Ctrl+V</kbd> or <kbd class="px-1.5 py-0.5 rounded bg-surface-container border border-outline-variant/40 font-mono text-[11px] text-on-surface font-semibold">⌘+V</kbd></span>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto">
+<button class="w-full sm:w-auto px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-xs border border-outline-variant/30 transition-all duration-200" id="paste-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">assignment</span>
+<span>Paste Screenshot</span>
+</button>
+<button class="w-full sm:w-auto px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-md shadow-primary/20 transition-all duration-200 font-bold" id="analyze-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>Check Screenshot</span>
+</button>
+</div>
+</div>
+<!-- Interactive Verdict Card (Simulated Output) -->
+<div id="ai-error" class="hidden mt-space-lg p-space-md rounded-xl border border-error bg-error-container text-on-error-container flex items-start gap-3" role="alert"><span class="material-symbols-outlined flex-shrink-0">error</span><p id="ai-error-text" class="font-body-sm text-body-sm flex-1"></p><button type="button" id="ai-retry-btn" class="px-3 py-1 rounded-lg bg-error text-on-error font-label-md text-label-md font-bold flex-shrink-0">Retry</button></div>
+<div class="hidden mt-space-lg bg-surface-container-low border-2 border-outline-variant/40 rounded-xl p-space-md md:p-space-lg shadow-sm" id="verdict-card">
+<div class="flex items-center gap-2 rounded-lg px-3 py-2 mb-space-md" id="flag-banner">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">flag</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-extrabold" id="flag-banner-title"></span>
+<span class="font-body-sm text-body-sm" id="flag-banner-sub"></span>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md pb-space-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" id="verdict-icon-container">
+<span class="material-symbols-outlined text-[28px]" id="verdict-icon">gpp_bad</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2.5 py-0.5 rounded-full text-white font-label-sm text-label-sm font-bold uppercase tracking-wider" id="verdict-badge"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">bolt</span> <span id="verdict-time"></span>
+                    </span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="verdict-title"></h2>
+<span id="verdict-title-speak"></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg border-2 shadow-xs" id="verdict-score-box">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Danger Score:</span>
+<span class="font-headline-sm text-headline-sm font-bold" id="verdict-score"></span>
+</div>
+</div>
+<div class="pb-space-md border-b border-surface-container" id="risk-meter"></div>
+<!-- Risk breakdown cards (filled by JS) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm pt-space-md mb-space-md" id="verdict-factors"></div>
+<!-- Detailed Hinglish explanation (filled by JS) -->
+<div class="mb-space-md" id="verdict-explanation"></div>
+<!-- Recommended Response Guidance -->
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm border border-surface-container">
+<div class="flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]">lightbulb</span>
+<span class="font-body-sm text-body-sm font-semibold">What should I do? Here are simple steps to stay safe.</span>
+</div>
+<div class="flex items-center gap-space-xs w-full sm:w-auto">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors w-full sm:w-auto" id="copy-report-btn" type="button">
+                  Copy Report
+                </button>
+<button class="px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors w-full sm:w-auto font-bold" id="scan-another-btn" type="button">
+                  Scan Another
+                </button>
+</div>
+</div>
+</div>
+<!-- Sample buttons -->
+<div class="mt-space-lg pt-space-md flex flex-col items-center gap-space-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Don't have a screenshot? Try an example:</span>
+<div class="flex flex-wrap items-center justify-center gap-space-xs" id="sample-list"></div>
+<div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-on-surface-variant" id="flag-legend"></div>
+</div>
+<!-- Privacy Trust Badge -->
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-low text-primary flex items-center justify-center gap-space-xs text-center border border-primary/20">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<p class="font-label-md text-label-md font-semibold text-on-surface-variant">
+<span class="text-primary font-bold">100% Private &amp; Safe:</span> Your images are checked temporarily and are never saved or sold.
+            </p>
+</div>
+</div>
+</section>
+</div>
+<!-- EMERGENCY STEPS + WHAT NOT TO DO (moved above How It Works) -->
+<section class="max-w-[1240px] mx-auto px-gutter py-space-xl" id="emergency-section">
+<!-- EMERGENCY TRIAGE SECTION (What to do if you already shared info) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg md:p-space-xl border-2 border-error/20 shadow-md mb-space-xl" id="emergency">
+<div class="flex items-center gap-space-xs text-error mb-2">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-extrabold">Emergency Steps</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mb-space-xs">
+            What to do if you already sent money or clicked a link
+          </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg max-w-3xl">
+            Don't blame yourself. Scammers are very good at tricking people. Act fast and follow these 4 steps in order:
+          </p>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md">
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex flex-col justify-between">
+<div>
+<span class="w-7 h-7 rounded-full bg-error text-on-error font-bold font-label-md text-label-md flex items-center justify-center mb-2">1</span>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Call Your Bank Instantly</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tell them you were scammed. Ask them to block your card and stop any payment that is still pending.</p>
+</div>
+<span class="text-[11px] font-bold text-primary mt-3">Within the first hour</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex flex-col justify-between">
+<div>
+<span class="w-7 h-7 rounded-full bg-error text-on-error font-bold font-label-md text-label-md flex items-center justify-center mb-2">2</span>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Check Your Credit Report</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Look at your CIBIL report for any loan or card you did not apply for. Tell the lender at once.</p>
+</div>
+<span class="text-[11px] font-bold text-primary mt-3">Free once a year</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex flex-col justify-between">
+<div>
+<span class="w-7 h-7 rounded-full bg-error text-on-error font-bold font-label-md text-label-md flex items-center justify-center mb-2">3</span>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Reset Passwords</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Change your email password right away from a safe phone or computer. Log out of all other devices.</p>
+</div>
+<span class="text-[11px] font-bold text-primary mt-3">Very important</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex flex-col justify-between">
+<div>
+<span class="w-7 h-7 rounded-full bg-error text-on-error font-bold font-label-md text-label-md flex items-center justify-center mb-2">4</span>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Report to Authorities</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Call the Cyber Crime Helpline <strong class="text-on-surface">1930</strong> right away, then report on <strong class="text-on-surface">cybercrime.gov.in</strong>.</p>
+</div>
+<span class="text-[11px] font-bold text-primary mt-3">Creates an official record</span>
+</div>
+</div>
+</div>
+<!-- WHAT NOT TO DO AFTER A SCAM -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg md:p-space-xl border-2 shadow-md" id="dont-do" style="border-color:rgba(194,65,12,.3)">
+<div class="flex items-center gap-space-xs mb-2" style="color:#c2410c">
+<span class="material-symbols-outlined text-[22px]">do_not_disturb_on</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-extrabold">Avoid These Mistakes</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mb-space-xs">What NOT to do after a scam</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg max-w-3xl">Panic makes people repeat the mistake. Stay calm and avoid these 6 things:</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md">
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">delete_forever</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't delete the evidence</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Keep the messages, screenshots, call logs and payment receipts. You need them for the bank and the police report.</p></div>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">phone_disabled</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't call numbers from the message or Google</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Scammers also run fake "customer care" numbers. Use only the number on your card, passbook or official app.</p></div>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">money_off</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't pay a recovery fee</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Anyone who promises to get your money back for a fee is another scammer. Real help from your bank and 1930 is free.</p></div>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">screen_share</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't share OTP, PIN or your screen</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Do not install screen-sharing apps like AnyDesk or TeamViewer, and do not read out any new OTP, even to someone who says they are from the bank.</p></div>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">volume_off</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't stay silent or feel ashamed</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Tell your family and your bank. Scammers count on shame. Reporting quickly is what can save your money.</p></div>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30 flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#ffedd5;color:#c2410c"><span class="material-symbols-outlined text-[20px]">block</span></div>
+<div><h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Don't reply to or argue with the scammer</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Do not threaten, bargain or send "just a little more" money. Save the evidence first, then block them.</p></div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: HOW IT WORKS (EXPANDED 4-STEP DETAILED EXPLAINER) -->
+<section class="w-full bg-surface-container-low/60 py-space-xl border-y border-surface-container" id="how-it-works">
+<div class="max-w-[1240px] mx-auto px-gutter">
+<div class="text-center max-w-3xl mx-auto mb-space-xl">
+<div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>How we check</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
+            How FraudShield protects you
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+            Made for moments when you feel rushed or worried. Here are our 4 simple steps.
+          </p>
+</div>
+<!-- 4-Step Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-space-xl">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-xl bg-primary/10 text-primary font-bold font-headline-sm text-headline-sm flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">1</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">Privacy First</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Upload or Paste</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+                Upload any screenshot from your phone or computer. Tip: hide card numbers, OTPs and addresses first. The image is sent to an AI service to read the message.
+              </p>
+</div>
+<!-- Visual Illustrative Card -->
+<div class="h-32 w-full rounded-lg bg-surface-container-high/40 p-space-sm flex flex-col justify-center items-center border border-surface-container text-left">
+<div class="w-full bg-surface-container-lowest rounded-md p-2 shadow-xs border border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">credit_card</span>
+<div class="flex-1">
+<div class="h-2 w-24 bg-on-surface-variant/20 rounded-full"></div>
+<div class="h-1.5 w-16 bg-primary/60 rounded-full mt-1.5 flex items-center gap-1">
+<span class="text-[9px] text-primary font-mono tracking-widest font-bold">•••• 4892</span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-primary/15 text-primary text-[10px] font-bold rounded">REDACTED</span>
+</div>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary font-bold font-headline-sm text-headline-sm flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">2</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">Smart Scan</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Spot the Tricks</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+                Our AI looks for spelling tricks (like paypaI with a capital I instead of paypal), odd links, and words meant to scare or rush you.
+              </p>
+</div>
+<!-- Visual Illustrative Card -->
+<div class="h-32 w-full rounded-lg bg-surface-container-high/40 p-space-sm flex flex-col justify-center gap-1.5 border border-surface-container">
+<div class="flex justify-between items-center text-[11px] font-medium text-on-surface-variant">
+<span>Lookalike website:</span>
+<span class="text-error font-bold">chase-secure-auth.top</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-error h-1.5 rounded-full w-[92%]"></div>
+</div>
+<div class="flex justify-between items-center text-[11px] font-medium text-on-surface-variant mt-1">
+<span>Rush tactic:</span>
+<span class="text-error font-bold">12-minute deadline</span>
+</div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-xl bg-tertiary-fixed text-tertiary font-bold font-headline-sm text-headline-sm flex items-center justify-center group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">3</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">Danger Score</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Score and Flag</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+                The AI gives your message a danger score from 0 to 100 and a colour flag, from Green (safe) to Red (dangerous).
+              </p>
+</div>
+<!-- Visual Illustrative Card -->
+<div class="h-32 w-full rounded-lg bg-surface-container-high/40 p-space-sm flex flex-col justify-center gap-1.5 border border-surface-container">
+<div class="flex items-center gap-2 p-1.5 bg-surface-container-lowest rounded border border-outline-variant/30">
+<span class="material-symbols-outlined text-[16px] text-primary">speed</span>
+<span class="text-[11px] font-bold text-on-surface">Danger score: <span class="text-error">92 / 100</span></span>
+</div>
+<div class="flex items-center gap-2 p-1.5 bg-surface-container-lowest rounded border border-outline-variant/30">
+<span class="material-symbols-outlined text-[16px] text-secondary">flag</span>
+<span class="text-[11px] font-bold text-on-surface">Flag: <span class="text-error">Red</span></span>
+</div>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-xl bg-primary-container text-on-primary font-bold font-headline-sm text-headline-sm flex items-center justify-center group-hover:bg-primary-container/80 transition-colors">4</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">Clear Guidance</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Clear Answer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+                You get a clear answer (<span class="font-bold text-primary">Safe</span>, <span class="font-bold text-secondary">Caution</span>, or <span class="font-bold text-error">Scam</span>) and simple steps on who to block and where to report.
+              </p>
+</div>
+<!-- Visual Illustrative Card -->
+<div class="h-32 w-full rounded-lg bg-surface-container-high/40 p-space-sm flex items-center justify-around border border-surface-container">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface mt-1">Safe</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">info</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface mt-1">Caution</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">gpp_bad</span>
+</div>
+<span class="text-[10px] font-bold text-error mt-1">Scam</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive illustrative breakdown card: What Our Scanner Looks For -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg md:p-space-xl border border-surface-container shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md mb-space-lg pb-space-md border-b border-surface-container">
+<div>
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary">What we check</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">What FraudShield looks for in your message</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+              Scammers use pressure and confusing details to fool you. Here is what we check in every message.
+            </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30">
+<div class="w-8 h-8 rounded-lg bg-error-container text-error flex items-center justify-center mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Fake Urgency</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Catches threats like "Account suspended in 30 mins", "Warrant issued", or "Unauthorized withdrawal".</p>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed text-secondary flex items-center justify-center mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Fake Website Links</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Spots odd website endings (.xyz, .top, .vip) that pretend to belong to a trusted company.</p>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">fingerprint</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Fake Phone Numbers</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Spots internet-based phone numbers that pretend to be a real bank or office.</p>
+</div>
+<div class="p-space-md rounded-lg bg-surface border border-outline-variant/30">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface mb-1">Pressure to Pay</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Catches requests to pay by gift card, crypto or instant transfer, money you can't get back.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: RICH COMMON SCAMS LIBRARY SECTION -->
+<section class="max-w-[1240px] mx-auto px-gutter py-space-xl" id="common-scams">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-lg gap-space-sm">
+<div>
+<div class="flex items-center gap-space-xs text-primary mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Scam Examples</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
+            Common scams circulating today
+          </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+          Typical scam messages, written the way they often arrive in India. Pick a type to see examples.
+        </p>
+</div>
+<!-- Category Filter Tabs -->
+<div class="flex items-center gap-2 overflow-x-auto pb-space-sm mb-space-lg no-scrollbar" id="scam-filter-tabs">
+<button class="scam-tab-btn active px-4 py-2 rounded-full font-label-md text-label-md font-bold transition-all bg-primary text-on-primary shadow-xs" data-category="all" type="button">All Categories</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="sms" type="button">Fake SMS</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="delivery" type="button">Delivery &amp; Package</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="bank" type="button">Bank &amp; UPI Fraud</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="job" type="button">Job &amp; Remote Work</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="invoice" type="button">Subscription &amp; Invoices</button>
+<button class="scam-tab-btn px-4 py-2 rounded-full font-label-md text-label-md font-semibold text-on-surface-variant bg-surface-container-low hover:bg-surface-container hover:text-on-surface border border-outline-variant/30 transition-all" data-category="tech" type="button">Tech Support Extortion</button>
+</div>
+<!-- Curated Rich Scam Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="scam-cards-grid"></div>
+</section>
+<!-- SECTION 4: COMPREHENSIVE SAFETY TIPS & EMERGENCY TRIAGE -->
+<section class="w-full bg-surface-container-low/40 py-space-xl border-t border-surface-container" id="safety-tips">
+<div class="max-w-[1240px] mx-auto px-gutter">
+<div class="text-center max-w-3xl mx-auto mb-space-xl">
+<div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>Stay Safe Every Day</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
+            Essential digital safety rules for everyone
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+            Scammers want you to panic. These 4 habits help you stay calm and in control.
+          </p>
+</div>
+<!-- 4 Core Habit Pillars -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-space-xl">
+<!-- Habit 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">pause_circle</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-1">1. The "Pause Rule"</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">
+                Real organizations (your bank, the police, Amazon) <strong class="text-on-surface">never demand money right now</strong> by threatening arrest or closing your account.
+              </p>
+<span class="font-label-sm text-label-sm text-primary font-bold">Action: Stop for 10 minutes. Panic is the scammer's biggest weapon.</span>
+</div>
+</div>
+<!-- Habit 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">search_check</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-1">2. Check Who Really Sent It</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">
+                Caller names and sender names can be faked in seconds. Look carefully at the real website name or email address after the <code class="font-mono bg-surface-container px-1 rounded">@</code> or in web links.
+              </p>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Action: Never trust the name on the screen. Hang up and call the number printed on your card.</span>
+</div>
+</div>
+<!-- Habit 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">touch_app</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-1">3. Don't Tap Links in Messages</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">
+                Links in unexpected messages often lead to copy-cat websites that steal your passwords and OTPs.
+              </p>
+<span class="font-label-sm text-label-sm text-tertiary font-bold">Action: Open your bank's official app, or type the website address yourself.</span>
+</div>
+</div>
+<!-- Habit 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-surface-container shadow-sm flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">key</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-1">4. Use a Safer Login Code</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">
+                Codes sent by SMS can be stolen, or tricked out of you on a fake call. For email and banking, use an authenticator app instead.
+              </p>
+<span class="font-label-sm text-label-sm text-primary font-bold">Action: Use an app like Google Authenticator instead of SMS codes.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: FAQ ACCORDION -->
+<section class="max-w-[860px] mx-auto px-gutter py-space-xl" id="faq">
+<div class="text-center mb-space-lg">
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary">Frequently Asked Questions</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-extrabold mt-1">Got questions? We're here to help.</h2>
+</div>
+<div class="space-y-space-sm">
+<details class="group bg-surface-container-lowest rounded-xl p-space-md border border-surface-container shadow-xs [&amp;_summary::-webkit-details-marker]:hidden cursor-pointer" open="">
+<summary class="flex items-center justify-between font-label-lg text-label-lg text-on-surface font-bold">
+<span>Is my personal data or screenshot kept on your servers?</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm leading-relaxed">
+            No. Your image is only used to check the message and is deleted right after you get your result. We don't store your data or sell it to anyone. Tip: it is read by Google's AI, so hide private details first.
+          </p>
+</details>
+<details class="group bg-surface-container-lowest rounded-xl p-space-md border border-surface-container shadow-xs [&amp;_summary::-webkit-details-marker]:hidden cursor-pointer">
+<summary class="flex items-center justify-between font-label-lg text-label-lg text-on-surface font-bold">
+<span>What happens to my personal details in the screenshot?</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm leading-relaxed">
+            We do not hide anything for you. Before uploading, please crop or cover card numbers, ID numbers, OTPs and phone numbers.
+          </p>
+</details>
+<details class="group bg-surface-container-lowest rounded-xl p-space-md border border-surface-container shadow-xs [&amp;_summary::-webkit-details-marker]:hidden cursor-pointer">
+<summary class="flex items-center justify-between font-label-lg text-label-lg text-on-surface font-bold">
+<span>What should I do if a screenshot is marked as "Caution"?</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm leading-relaxed">
+            "Caution" means we didn't find a known bad link, but the message still looks suspicious (for example, it rushes you or comes from an unknown sender). Don't reply. Contact the company using its official number or app.
+          </p>
+</details>
+<details class="group bg-surface-container-lowest rounded-xl p-space-md border border-surface-container shadow-xs [&amp;_summary::-webkit-details-marker]:hidden cursor-pointer">
+<summary class="flex items-center justify-between font-label-lg text-label-lg text-on-surface font-bold">
+<span>Can I check screenshots on my mobile phone?</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-sm leading-relaxed">
+            Yes! FraudShield is fully responsive. Simply take a screenshot on iOS or Android, tap the upload area above, and select the screenshot directly from your camera roll.
+          </p>
+</details>
+</div>
+</section>
+</main>
+<!-- COMPREHENSIVE FOOTER -->
+<footer class="w-full bg-surface-container-low border-t border-surface-container shadow-[0_-1px_6px_rgba(0,0,0,0.02)]">
+<div class="max-w-[1240px] mx-auto px-gutter py-space-xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-space-lg">
+<div class="md:col-span-2 flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Fraud<span class="text-primary font-bold">Shield</span></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+            Helping everyone spot scams quickly. Upload a screenshot of any suspicious message and get a clear, calm answer.
+          </p>
+<div class="flex items-center gap-space-xs text-primary font-label-sm text-label-sm mt-space-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>We don't keep your images. Your checks stay private.</span>
+</div>
+</div>
+<div>
+<div class="font-label-lg text-label-lg text-on-surface font-bold mb-space-sm">Explore Platform</div>
+<div class="flex flex-col gap-space-xs">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#upload">Check a Screenshot</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#emergency">Emergency Response Guide</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#how-it-works">How It Works</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#common-scams">Common Scams Library</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#safety-tips">Digital Safety Playbook</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#faq">Help &amp; FAQ</a>
+</div>
+</div>
+<div>
+<div class="font-label-lg text-label-lg text-on-surface font-bold mb-space-sm">Official Reporting Links</div>
+<div class="flex flex-col gap-space-xs">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="https://cybercrime.gov.in" rel="noopener" target="_blank">
+<span>National Cyber Crime Portal</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="https://sancharsaathi.gov.in" rel="noopener" target="_blank">
+<span>Sanchar Saathi (report spam calls/SMS)</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="tel:1930" rel="noopener" target="_blank">
+<span>Cyber Crime Helpline: 1930</span>
+<span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#privacy">Privacy Guarantee</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#terms">Terms of Service</a>
+</div>
+</div>
+</div>
+<div class="pt-space-lg border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+          © 2025 FraudShield Technologies. Dedicated to consumer safety and peace of mind. Not affiliated with governmental agencies.
+        </p>
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">AI-powered · can make mistakes</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- CLIENT-SIDE SCRIPTS (plain scripts, no build step; order matters) -->
+<script src="js/data/demos.js"></script>
+<script src="js/data/scams.js"></script>
+<script src="js/data/legal.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+</body></html>

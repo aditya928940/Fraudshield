@@ -1,0 +1,36 @@
+/* FraudShield: custom styles (everything else comes from Tailwind CSS via CDN) */
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    overscroll-behavior: none;
+  }
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8f9ff;
+}
+::-webkit-scrollbar-thumb {
+  background: #bcc9c6;
+  border-radius: 4px;
+}
+
+/* language switch */
+.lang-btn { padding: 4px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; color: #3d4947; line-height: 16px; transition: all .15s; }
+.lang-btn:hover { background: #e5eeff; }
+.lang-btn.active { background: #0d9488; color: #fff; }
+/* voice buttons */
+.speak-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0; background: #e5eeff; color: #0d9488; border: 1px solid rgba(13,148,136,.3); cursor: pointer; transition: all .15s; }
+.speak-btn:hover { background: #0d9488; color: #fff; }
+.speak-btn.speaking { background: #0d9488; color: #fff; animation: speakPulse 1.2s infinite; }
+.speak-all { width: auto; height: 32px; padding: 0 12px; gap: 6px; font-size: 12px; font-weight: 700; }
+@keyframes speakPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(13,148,136,.45); } 50% { box-shadow: 0 0 0 6px rgba(13,148,136,0); } }
+/* message text: looks like a phone SMS, not code */
+.sms-font { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif; font-style: normal; letter-spacing: 0; }
+/* Hindi font */
+html[lang="hi"] body, html[lang="hi"] [class*="font-"]:not(.material-symbols-outlined):not(.font-mono) { font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif; }
