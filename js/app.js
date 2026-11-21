@@ -245,7 +245,7 @@ sampleList.addEventListener('click', e => {
   previewPanel.classList.remove('hidden');
   previewPanel.classList.add('flex');
   previewFilename.textContent = d.file;
-  cancelAI(); hideError(); currentFile = null; previewImg.removeAttribute('src');
+  setMode('image'); cancelAI(); hideError(); currentFile = null; previewImg.removeAttribute('src');
   simulateAnalysis(d.id);
 });
 
@@ -262,6 +262,7 @@ function setLang(l) {
   renderLegend();
   renderScams();
   renderLegal();
+  textInput.placeholder = STR[l].ph;
   if (current && !verdictCard.classList.contains('hidden')) { renderVerdict(); ensureLang(l); }
   if (aiErr && !aiErr.classList.contains('hidden')) hideError();
 }
@@ -310,14 +311,14 @@ function showError(code) {
   aiErr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function cancelAI() { aiToken++; if (aiCtl) { aiCtl.abort(); aiCtl = null; } setBusy(false); }
-async function runAI() {
-  if (!currentFile) return;
+async function runAI(text) {
+  if (typeof text !== 'string' && !currentFile) return;
   cancelAI(); stopSpeech(); hideError();
   const my = aiToken, t0 = Date.now();
   aiCtl = new AbortController();
   setBusy(true);
   try {
-    const r = await aiAnalyze(currentFile, lang, aiCtl.signal);
+    const r = typeof text === 'string' ? await aiAnalyzeText(text, lang, aiCtl.signal) : await aiAnalyze(currentFile, lang, aiCtl.signal);
     if (my !== aiToken) return;
     current = { key: 'ai', ai: true, mock: r.mock, secs: (Date.now() - t0) / 1000,
       data: { id: 'ai', score: r.score, msg: r.message, q: r.quotes, fi: r.icons, _base: lang, [lang]: r.fields } };
@@ -344,7 +345,30 @@ async function ensureLang(l) {
   finally { delete d._pending[l]; }
 }
 const retryBtn = $('ai-retry-btn');
-if (retryBtn) retryBtn.addEventListener('click', runAI);
+let lastText = null;
+if (retryBtn) retryBtn.addEventListener('click', () => (lastText !== null && !currentFile) ? runAI(lastText) : runAI());
+
+// ----- tabs: screenshot / paste text -----
+const modeImage = $('mode-image'), modeText = $('mode-text'), textInput = $('text-input'), textCount = $('text-count');
+function setMode(m) {
+  const img = m === 'image';
+  modeImage.classList.toggle('hidden', !img); modeText.classList.toggle('hidden', img);
+  [['tab-image', img], ['tab-text', !img]].forEach(([id, on]) => {
+    const b = $(id); b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.classList.toggle('bg-primary', on); b.classList.toggle('text-on-primary', on); b.classList.toggle('text-on-surface-variant', !on);
+  });
+  if (!img) textInput.focus();
+}
+$('tab-image').addEventListener('click', () => setMode('image'));
+$('tab-text').addEventListener('click', () => setMode('text'));
+textInput.addEventListener('input', () => { textCount.textContent = textInput.value.length + ' / 3000'; });
+$('text-clear-btn').addEventListener('click', () => { textInput.value = ''; textCount.textContent = '0 / 3000'; cancelAI(); hideError(); verdictCard.classList.add('hidden'); stopSpeech(); textInput.focus(); });
+$('text-analyze-btn').addEventListener('click', () => {
+  const t = textInput.value.trim();
+  if (t.length < 5) { toast(STR[lang].tshort); textInput.focus(); return; }
+  lastText = t; currentFile = null; lastSampleKey = null;
+  runAI(t);
+});
 
 // ----- copy report -----
 $('copy-report-btn').addEventListener('click', () => {
@@ -376,7 +400,7 @@ fileInput.addEventListener('change', e => { if (e.target.files.length > 0) handl
 
 function handleFileSelect(file) {
   if (!file.type.startsWith('image/')) { alert('Please upload an image file (PNG, JPG, WEBP).'); return; }
-  cancelAI(); hideError(); lastSampleKey = null;
+  setMode('image'); cancelAI(); hideError(); lastSampleKey = null; lastText = null;
   currentFile = file;
   previewFilename.textContent = file.name;
   previewPanel.classList.remove('hidden');

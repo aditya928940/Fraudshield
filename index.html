@@ -71,6 +71,12 @@
 </div>
 <!-- Core Interactive Card -->
 <div class="max-w-[860px] mx-auto bg-surface-container-lowest rounded-xl shadow-xl border border-surface-container p-space-md md:p-space-lg relative z-10">
+<!-- Mode tabs: screenshot or text -->
+<div class="flex gap-space-xs mb-space-md p-1 rounded-lg bg-surface-container-low border border-surface-container" role="tablist">
+<button type="button" role="tab" id="tab-image" aria-selected="true" class="mode-tab flex-1 px-space-md py-2 rounded-md font-label-lg text-label-lg font-bold flex items-center justify-center gap-1.5 bg-primary text-on-primary"><span class="material-symbols-outlined text-[18px]">image</span><span>Screenshot</span></button>
+<button type="button" role="tab" id="tab-text" aria-selected="false" class="mode-tab flex-1 px-space-md py-2 rounded-md font-label-lg text-label-lg font-bold flex items-center justify-center gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">notes</span><span>Paste Text</span></button>
+</div>
+<div id="mode-image">
 <!-- Dropzone -->
 <div class="relative group cursor-pointer rounded-xl bg-surface border-2 border-dashed border-outline-variant hover:border-primary p-space-lg md:p-space-xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:bg-primary-fixed-dim/10" id="dropzone">
 <input accept="image/png,image/jpeg,image/webp" aria-label="Upload suspicious screenshot" class="sr-only" id="file-input" type="file"/>
@@ -122,6 +128,17 @@
 </button>
 </div>
 </div>
+</div>
+<div id="mode-text" class="hidden">
+<label for="text-input" class="sr-only">Paste the suspicious message</label>
+<textarea id="text-input" maxlength="3000" rows="7" class="w-full rounded-xl bg-surface border-2 border-outline-variant focus:border-primary focus:outline-none p-space-md font-body-md text-body-md text-on-surface resize-y"></textarea>
+<div class="mt-space-xs flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/30"><span class="material-symbols-outlined text-[15px] text-primary">encrypted</span><span>Tip: remove card numbers and OTPs before pasting</span></div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto">
+<span id="text-count" class="font-label-sm text-label-sm text-on-surface-variant">0 / 3000</span>
+<button type="button" id="text-clear-btn" class="px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-lg text-label-lg border border-outline-variant/30">Clear</button>
+<button type="button" id="text-analyze-btn" class="flex-1 sm:flex-none px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-md shadow-primary/20 font-bold"><span class="material-symbols-outlined text-[18px]">verified_user</span><span>Check Text</span></button>
+</div></div></div>
 <!-- Interactive Verdict Card (Simulated Output) -->
 <div id="ai-error" class="hidden mt-space-lg p-space-md rounded-xl border border-error bg-error-container text-on-error-container flex items-start gap-3" role="alert"><span class="material-symbols-outlined flex-shrink-0">error</span><p id="ai-error-text" class="font-body-sm text-body-sm flex-1"></p><button type="button" id="ai-retry-btn" class="px-3 py-1 rounded-lg bg-error text-on-error font-label-md text-label-md font-bold flex-shrink-0">Retry</button></div>
 <div class="hidden mt-space-lg bg-surface-container-low border-2 border-outline-variant/40 rounded-xl p-space-md md:p-space-lg shadow-sm" id="verdict-card">

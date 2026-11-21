@@ -63,3 +63,9 @@ async function aiTranslate(fields, lang, signal) {
   const j = await aiPost({ mode: 'translate', lang, fields }, signal);
   return j.fields;
 }
+
+// Text pasted by the user (no image)
+async function aiAnalyzeText(text, lang, signal) {
+  const j = await aiPost({ mode: 'analyze', lang, text }, signal);
+  return Object.assign({ mock: !!j.mock }, j.result);
+}

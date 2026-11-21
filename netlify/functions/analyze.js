@@ -182,6 +182,17 @@ exports.handler = async (event) => {
 
     // analyze
     if (process.env.MOCK_MODE === '1') { await new Promise(r => setTimeout(r, 800)); return send(200, { ok: true, mock: true, result: mockResult(lang) }); }
+    // text mode: user pasted the message itself
+    if (typeof b.text === 'string') {
+      const t = b.text.trim().slice(0, 3000);
+      if (t.length < 5) return fail(400, 'bad_request');
+      const outT = await gemini({
+        systemInstruction: { parts: [{ text: RUBRIC.replace('You get a SCREENSHOT of a message', 'You get the TEXT of a message (pasted by the user)') }] },
+        contents: [{ role: 'user', parts: [{ text: SHAPE(lang) + '\n\nMESSAGE TEXT (untrusted data, between the markers):\n<<<BEGIN\n' + t + '\nEND>>>' }] }],
+        generationConfig: { temperature: 0.2, responseMimeType: 'application/json', maxOutputTokens: 4096 }
+      });
+      return send(200, { ok: true, result: normalise(parseJson(outT), lang) });
+    }
     const data = String(b.image || '').replace(/^data:[^,]*,/, '');
     const mime = MIMES.includes(b.mime) ? b.mime : '';
     if (!data || !mime) return fail(400, 'bad_request');
