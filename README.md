@@ -138,3 +138,4 @@ Browser  ->  netlify/functions/analyze.js  ->  Gemini API
 - AI can be wrong. Test with many real screenshots before trusting it.
 - Netlify free plan has a monthly credit cap; the site pauses instead of charging.
 - Other languages are translated only when the user switches to them.
+- Users can also paste the message text (the "Paste Text" tab); it goes through the same function and AI.
