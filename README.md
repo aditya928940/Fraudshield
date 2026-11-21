@@ -67,6 +67,37 @@ See `.env.example`. Only use a local `.env` for testing, and never upload it.
 - `/.netlify/functions/analyze?health=1` shows whether the key is set and which model is used.
 - `/.netlify/functions/analyze?models=1` lists the models your key can use.
 
+
+## Voice by ElevenLabs
+
+The speaker buttons use **ElevenLabs** text-to-speech for a natural voice in English, Hinglish and Hindi. The browser sends the explanation text to `netlify/functions/speak.js`, which calls ElevenLabs with a secret key and returns an mp3. Short lines are grouped, the next part is pre-loaded while one plays, and replays come from a cache (no extra credits). If ElevenLabs is unavailable, the page falls back to the device's own voice.
+
+| Env variable | Required | What it does |
+|---|---|---|
+| `ELEVENLABS_API_KEY` | yes (for the AI voice) | Your ElevenLabs key |
+| `ELEVEN_VOICE_ID` | no | Voice to use. Default: a built-in ElevenLabs voice. List yours at `/.netlify/functions/speak?voices=1` |
+| `ELEVEN_MODEL` | no | Default `eleven_flash_v2_5` (fast, cheap, supports Hindi) |
+
+Check it: `/.netlify/functions/speak?health=1` should show `"keySet":true`.
+
+## Deploy on Render (instead of Netlify)
+
+`server.js` is a tiny Node server (no packages) that serves the site and runs the same two functions. Create a **New Web Service** from your GitHub repo and use:
+
+| Field | Value |
+|---|---|
+| Language | Node |
+| Branch | main |
+| Root Directory | (leave empty) |
+| Build Command | `npm install` |
+| Start Command | `npm start` |
+| Instance type | Free |
+| Health Check Path | `/healthz` |
+
+Environment variables: `GEMINI_API_KEY`, `ELEVENLABS_API_KEY` (and optionally `AI_TIMEOUT_MS=25000`, `ELEVEN_VOICE_ID`). Render has no 10-second function limit, so the longer timeout is safe.
+
+Note: on Render's free plan the service **sleeps after about 15 minutes without visitors** and takes up to a minute to wake. Open the site once before a demo.
+
 ## If something goes wrong
 
 | Message on the site | What to do |

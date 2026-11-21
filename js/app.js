@@ -81,22 +81,41 @@ function setBtnState(btn, on) {
   const lb = btn.querySelector('.speak-label');
   if (lb) lb.textContent = on ? STR[lang].stop : STR[lang].listenAll;
 }
+// ElevenLabs voice (through our Netlify function). If it fails, the browser's own voice is the backup.
+const VOICE_ENDPOINT = '/.netlify/functions/speak';
+const voiceCache = new Map();   // text -> audio URL (so replaying costs no credits)
+let curAudio = null, voiceCtl = null, fellBack = false;
+
 function stopSpeech() {
   speakToken++;
+  if (voiceCtl) { voiceCtl.abort(); voiceCtl = null; }
+  if (curAudio) { curAudio.pause(); curAudio = null; }
   if (synth) synth.cancel();
   if (activeBtn) { setBtnState(activeBtn, false); activeBtn = null; }
 }
-function speak(chunks, btn) {
-  if (!synth) { toast(STR[lang].noApi); return; }
-  if (activeBtn === btn) { stopSpeech(); return; }
-  stopSpeech();
-  if (speakLang === 'hi' && voices.length && !pickVoice('hi')) { toast(STR.hi.noVoice); return; }
-  const token = speakToken;
-  const queue = chunks.filter(Boolean);
+// join short lines into bigger pieces (fewer requests, smoother voice)
+function groupChunks(chunks, max = 450) {
+  const out = []; let cur = '';
+  for (const c of chunks) {
+    if (cur && (cur + ' ' + c).length > max) { out.push(cur); cur = c; }
+    else cur = cur ? cur + ' ' + c : c;
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+async function fetchVoice(text, l, signal) {
+  const key = l + '|' + text;
+  if (voiceCache.has(key)) return voiceCache.get(key);
+  const r = await fetch(VOICE_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang: l }), signal });
+  if (!r.ok || !(r.headers.get('content-type') || '').includes('audio')) throw new Error('voice ' + r.status);
+  const url = URL.createObjectURL(await r.blob());
+  voiceCache.set(key, url);
+  return url;
+}
+function browserSpeak(queue, token, finish) {
+  if (!synth) { finish(); toast(STR[lang].noApi); return; }
+  if (speakLang === 'hi' && voices.length && !pickVoice('hi')) { finish(); toast(STR.hi.noVoice); return; }
   let i = 0;
-  activeBtn = btn;
-  setBtnState(btn, true);
-  const finish = () => { if (token === speakToken) { setBtnState(btn, false); activeBtn = null; } };
   const next = () => {
     if (token !== speakToken) return;
     if (i >= queue.length) { finish(); return; }
@@ -111,9 +130,44 @@ function speak(chunks, btn) {
   };
   setTimeout(next, 80);
 }
-const speakBtn = id => synth
-  ? `<button type="button" class="speak-btn" data-speak="${id}" aria-label="${esc(STR[lang].listen)}" title="${esc(STR[lang].listen)}"><span class="material-symbols-outlined text-[16px]">volume_up</span></button>`
-  : '';
+function speak(chunks, btn) {
+  if (activeBtn === btn) { stopSpeech(); return; }
+  stopSpeech();
+  const token = speakToken;
+  const groups = groupChunks(chunks.filter(Boolean));
+  if (!groups.length) return;
+  activeBtn = btn;
+  setBtnState(btn, true);
+  const finish = () => { if (token === speakToken) { setBtnState(btn, false); activeBtn = null; } };
+  const l = speakLang;
+  const audio = new Audio();            // created inside the click so the browser allows playing
+  voiceCtl = new AbortController();
+  const sig = voiceCtl.signal;
+  const play = async i => {
+    if (token !== speakToken) return;
+    if (i >= groups.length) { finish(); return; }
+    try {
+      const url = await fetchVoice(groups[i], l, sig);
+      if (token !== speakToken) return;
+      if (groups[i + 1]) fetchVoice(groups[i + 1], l, sig).catch(() => {});   // load the next part while this plays
+      curAudio = audio;
+      audio.src = url;
+      audio.onended = () => play(i + 1);
+      audio.onerror = () => fallback(i);
+      await audio.play();
+    } catch (e) {
+      if (token !== speakToken) return;
+      fallback(i);
+    }
+  };
+  const fallback = i => {
+    if (token !== speakToken) return;
+    if (!fellBack) { fellBack = true; toast(STR[lang].voiceFallback); }
+    browserSpeak(groups.slice(i), token, finish);
+  };
+  play(0);
+}
+const speakBtn = id => `<button type="button" class="speak-btn" data-speak="${id}" aria-label="${esc(STR[lang].listen)}" title="${esc(STR[lang].listen)}"><span class="material-symbols-outlined text-[16px]">volume_up</span></button>`;
 
 // ----- result card -----
 function meterHtml(score, f) {
@@ -200,8 +254,9 @@ function renderVerdict() {
       <div>
         <span class="font-label-sm text-label-sm font-bold uppercase tracking-wider" style="color:${f.color}">${esc(safe ? S.headSafe : S.head)}</span>
         <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">${esc(safe ? S.introSafe : S.intro)}</p>
+        <a href="https://elevenlabs.io" target="_blank" rel="noopener" class="inline-flex items-center gap-1 mt-1 font-label-sm text-label-sm text-primary"><span class="material-symbols-outlined text-[14px]">graphic_eq</span>${esc(S.voiceBy)}</a>
       </div>
-      ${synth ? `<button type="button" class="speak-btn speak-all" data-speak="all" aria-label="${esc(S.listenAll)}"><span class="material-symbols-outlined text-[16px]">volume_up</span><span class="speak-label">${esc(S.listenAll)}</span></button>` : ''}
+      <button type="button" class="speak-btn speak-all" data-speak="all" aria-label="${esc(S.listenAll)}"><span class="material-symbols-outlined text-[16px]">volume_up</span><span class="speak-label">${esc(S.listenAll)}</span></button>
     </div>
     <div class="p-space-sm rounded-lg bg-surface border border-outline-variant/30 sms-font text-[13px] leading-relaxed text-on-surface-variant mb-space-sm break-words">${esc(d.msg)}</div>
     <div class="grid grid-cols-1 md:grid-cols-${L.x.length >= 3 ? 3 : 2} gap-space-sm mb-space-md">${points}</div>
