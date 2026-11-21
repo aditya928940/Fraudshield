@@ -2,7 +2,6 @@
 
 **Check it before you tap.** FraudShield is a scam-message explainer built for India. Upload (or paste) a screenshot of a suspicious SMS, WhatsApp or email and it shows a colour-coded danger flag, explains the tricks the scammer is using in plain words, and tells you exactly what to do next.
 
-> Built as a college hackathon project. This is a front-end **prototype** (see [Demo status](#demo-status)).
 
 ## Features
 
