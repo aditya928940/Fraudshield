@@ -1,11 +1,13 @@
 # 🛡️ FraudShield
 
-**Check it before you tap.** FraudShield is a scam-message explainer built for India. Upload (or paste) a screenshot of a suspicious SMS, WhatsApp or email and it shows a colour-coded danger flag, explains the tricks the scammer is using in plain words, and tells you exactly what to do next.
+**Check it before you tap.** FraudShield is a scam-message explainer built for India. Upload a screenshot, or paste the text, of a suspicious SMS, WhatsApp message or email. An AI reads it and shows a colour-coded danger flag, explains the tricks the scammer is using in plain words, and tells you what to do next.
 
-> Built as a college hackathon project. This is a front-end **prototype** (see [Demo status](#demo-status)).
+> Built as a college hackathon project for educational purposes. Results come from an AI and can be wrong. See [Disclaimer](#disclaimer).
 
 ## Features
 
+- **Two ways to check**: upload or paste a **screenshot**, or use the **Paste Text** tab to paste the message itself.
+- **Real AI analysis**: Google Gemini (free tier) reads the message and returns a danger score, the suspicious lines, an explanation and next steps.
 - **Danger flag system**: every result gets a score out of 100 and a colour-coded flag:
 
   | Score | Flag | Meaning |
@@ -15,81 +17,117 @@
   | 51–75 | 🟠 Orange | High risk |
   | 76–100 | 🔴 Red | Scam alert |
 
-- **Explains the psychology**: shows the exact lines in the message that carry fake urgency, fake authority, fake websites, greed bait and so on, in simple language.
-- **Try-it demos**: four example messages, one for each flag level.
-- **3 languages**: English, Hinglish and हिन्दी. The choice is remembered in the browser.
+- **Explains the psychology**: points out the exact lines that carry fake urgency, fake authority, fake links, greed bait and so on, in simple language.
+- **Try-it demos**: four ready-made examples, one per flag level. They run in your browser and do not use the AI.
+- **3 languages**: English, Hinglish and हिन्दी. The choice is remembered. The AI answers in one language and translates others only when you switch (saves the free quota).
 - **Voice explanations**: a speaker icon next to each explanation reads it aloud (Web Speech API).
-- **Common scams library**: India-style spam messages (bank reward-points APK, courier redelivery fee, fake part-time job, Amazon Prime renewal, fake Windows popup, electricity power-cut SMS) with filter tabs.
-- **Emergency steps**: what to do in the first hour if you already sent money or clicked a link (call **1930**, report on **cybercrime.gov.in**, **Sanchar Saathi**).
-- **What NOT to do after a scam**: six common mistakes to avoid.
-- **Privacy Guarantee** and **Terms of Service** pop-ups.
+- **Common scams library**: India-style sample scams (bank KYC/APK, courier fee, fake job, Prime renewal, fake Windows popup, electricity SMS) with filter tabs.
+- **Emergency steps** and **What NOT to do** after a scam (call **1930**, report on **cybercrime.gov.in**, **Sanchar Saathi**).
+- **Privacy** and **Terms** pop-ups.
+- **Clear errors**: rate limit, timeout, "not a message", server not set up, each with a Retry button. A fake result is never shown as real.
 
-## Demo status
+## How it works
 
-This repository is a **prototype**:
+```
+Browser (index.html, js/app.js, js/ai.js)
+        │  screenshot (compressed) or pasted text
+        ▼
+Netlify Function  netlify/functions/analyze.js   ← holds the secret GEMINI_API_KEY
+        │
+        ▼
+Google Gemini API  →  JSON result  →  shown as the result card
+```
 
-- There is no backend and no AI model yet. When you upload a screenshot, the page shows an **example result**, not a real analysis. The four demo buttons show the full range of flags.
-- The sample scam messages are written examples modelled on common patterns. Phone numbers and links in them are masked or fake.
-- Your screenshot stays in your browser. Nothing is uploaded anywhere.
+The API key lives **only** on the server (a Netlify environment variable). It is never in the browser or in this repository.
+
+## Setup (about 15 minutes, no cost)
+
+1. **Get a Gemini key**: go to <https://aistudio.google.com/apikey>, sign in and click **Create API key**. Do **not** enable billing. Copy the key.
+2. **Put this folder on GitHub.** The `.gitignore` keeps `.env` out. Never paste your key into any file in the repo.
+3. **Deploy on Netlify**: sign up free at <https://app.netlify.com> with GitHub, choose **Add new project → Import from GitHub**, pick this repo and deploy. The settings in `netlify.toml` are picked up automatically.
+4. **Add the key**: *Project configuration → Environment variables* → add `GEMINI_API_KEY` with your key (tick "Contains secret values"). Then go to **Deploys → Trigger deploy → Deploy project without cache**. A variable only takes effect on a **new** deploy.
+5. **Test**:
+   - Open `https://YOUR-SITE.netlify.app/.netlify/functions/analyze?health=1`. You should see `"keySet":true`.
+   - Open the site, then upload a screenshot or use **Paste Text**.
+
+### Environment variables
+
+| Name | Required | What it does |
+|---|---|---|
+| `GEMINI_API_KEY` | yes | Your Gemini key |
+| `GEMINI_MODEL` | no | Model name. Default `gemini-flash-lite-latest` |
+| `MOCK_MODE` | no | Set to `1` to return a clearly labelled **fake** result (to test the setup without a key). Remove it afterwards |
+| `AI_TIMEOUT_MS` | no | Max wait for the AI. Default `9500` |
+| `ALLOWED_ORIGIN` | no | Which website may call the function. Default `*` |
+
+See `.env.example`. Only use a local `.env` for testing, and never upload it.
+
+### Helper links (add to your site address)
+
+- `/.netlify/functions/analyze?health=1` shows whether the key is set and which model is used.
+- `/.netlify/functions/analyze?models=1` lists the models your key can use.
+
+## If something goes wrong
+
+| Message on the site | What to do |
+|---|---|
+| "AI server is not set up on this website" | You opened the site from a file or GitHub Pages. Use the Netlify address. |
+| "missing API key" / "key is not working" | Check `GEMINI_API_KEY`, then redeploy without cache. |
+| "model name is wrong" | Open `?models=1`, pick a name from the list, set it as `GEMINI_MODEL`, redeploy. |
+| "took too long" | Free Netlify functions have a short time limit. Retry or use a smaller screenshot. |
+| "Too many checks" | Free Gemini limit reached. Wait a minute. |
+| "does not look like a message" | The image was not a message or chat. Upload the message screenshot. |
 
 ## Run it locally
 
-No build step. Just open `index.html` in a browser.
+The demos and page work by simply opening `index.html`, but the AI needs the Netlify function. To test it locally:
 
 ```bash
-# or serve it locally
-python3 -m http.server 8000
-# then open http://localhost:8000
+npm install -g netlify-cli
+cp .env.example .env      # then put your key inside .env
+netlify dev               # opens http://localhost:8888
 ```
-
-An internet connection is needed for the Tailwind CSS CDN and Google Fonts.
-
-## Deploy on GitHub Pages
-
-1. Push this folder to a GitHub repository.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, then save.
-4. Your site will be live at `https://<your-username>.github.io/<repo-name>/`.
-
-## Tech stack
-
-- Plain HTML, CSS and JavaScript in a single file
-- [Tailwind CSS](https://tailwindcss.com) (CDN)
-- Google Fonts: Plus Jakarta Sans, Noto Sans Devanagari, Material Symbols
-- Web Speech API for voice
-
-## Browser notes
-
-- Voice quality depends on the voices installed on the device. Some devices have no Hindi (hi-IN) voice; the page shows a short message in that case and Hinglish or English still work.
-- Works best in the latest Chrome, Edge or Safari.
 
 ## Project structure
 
 ```
 fraudshield/
-├── index.html              # page markup
-├── css/
-│   └── style.css           # custom styles (rest comes from Tailwind)
-├── js/
-│   ├── tailwind-config.js  # Tailwind theme: colours, fonts, spacing
-│   ├── data/
-│   │   ├── demos.js        # 4 demo messages + danger-score flags
-│   │   ├── scams.js        # "Common Scams" cards (Indian-style samples)
-│   │   └── legal.js        # Privacy Guarantee and Terms text
-│   ├── i18n.js             # English / Hinglish / Hindi translations
-│   └── app.js              # app logic: language, voice, results, upload, pop-ups
-└── README.md
+├── index.html                  # page markup
+├── netlify.toml                # tells Netlify where the function is
+├── .env.example                # example settings (copy to .env locally)
+├── .gitignore                  # keeps .env and keys out of GitHub
+├── netlify/functions/
+│   └── analyze.js              # server: calls Gemini, validates the answer
+├── css/style.css               # custom styles
+└── js/
+    ├── tailwind-config.js      # Tailwind theme
+    ├── data/
+    │   ├── demos.js            # 4 demo messages + danger-score flags
+    │   ├── scams.js            # Common Scams cards
+    │   └── legal.js            # Privacy and Terms text
+    ├── i18n.js                 # English / Hinglish / Hindi text
+    ├── ai.js                   # browser side: shrinks image, calls the function
+    └── app.js                  # app logic: tabs, language, voice, results, pop-ups
 ```
 
-The scripts are plain `<script>` files loaded in this order: `demos.js`, `scams.js`, `legal.js`, `i18n.js`, `app.js`. There is no build step.
+Where to change things:
+- Demo messages and flag colours: `js/data/demos.js`
+- Scam cards: `js/data/scams.js`
+- How the AI judges messages (the prompt and scoring rules): `RUBRIC` in `netlify/functions/analyze.js`
+- Translations: `js/i18n.js`
+- Site colours and fonts: `js/tailwind-config.js`
 
-### Where to change things
+## Tech stack
 
-- Add or edit a demo message: `js/data/demos.js`
-- Change score ranges or flag colours: `FLAGS` in `js/data/demos.js`
-- Add a scam card: `js/data/scams.js`
-- Fix a translation: `js/i18n.js` (page text) or the data file of that feature
-- Colours and fonts of the whole site: `js/tailwind-config.js`
+Plain HTML, CSS and JavaScript (no build step) · [Tailwind CSS](https://tailwindcss.com) via CDN · Netlify Functions (Node) · Google Gemini API · Web Speech API.
+
+## Privacy and honest notes
+
+- Uploaded screenshots and pasted text are sent to Google's Gemini AI to be read. This site does not store them. On Google's **free** tier, inputs may be used to improve Google products and may be reviewed by people, so **hide card numbers, OTPs and personal details before uploading or pasting**.
+- The demo buttons never leave your browser.
+- AI can be wrong. A "Safe" result is not a guarantee. Test with many real messages before relying on it.
+- The Netlify free plan has a monthly usage cap. When it is reached the site pauses instead of charging you.
+- Browser voice depends on the voices installed on the device. Some devices have no Hindi voice.
 
 ## If you are scammed in India
 
@@ -99,43 +137,4 @@ The scripts are plain `<script>` files loaded in this order: `demos.js`, `scams.
 
 ## Disclaimer
 
-FraudShield is an educational project. A "Safe" result is not a guarantee. Always confirm with your bank's official app or the number printed on your card. It is not legal or financial advice.
-
-
----
-
-# Level 2: real AI screenshot reading (free)
-
-The site now reads uploaded screenshots with Google Gemini (free tier). The secret key lives only on the server (a Netlify Function), never in the browser.
-
-```
-Browser  ->  netlify/functions/analyze.js  ->  Gemini API
-(js/ai.js)   (holds GEMINI_API_KEY)
-```
-
-## Setup (about 15 minutes, no money)
-
-1. **Get a Gemini key**: open https://aistudio.google.com/apikey, sign in, click *Create API key*. Do NOT enable billing. Copy the key.
-2. **Push this folder to GitHub** (the `.gitignore` keeps `.env` out; never paste the key in any file).
-3. **Netlify**: sign up free at https://app.netlify.com with GitHub -> *Add new project* -> *Import from GitHub* -> pick this repo. Leave build settings as they are (`netlify.toml` handles it) -> Deploy.
-4. **Add the key**: Site configuration -> Environment variables -> add `GEMINI_API_KEY` = your key. Then Deploys -> *Trigger deploy*.
-5. **Test**:
-   - `https://YOUR-SITE.netlify.app/.netlify/functions/analyze?health=1` should show `"keySet":true`.
-   - Upload a real screenshot on the site.
-   - Want to test the wiring before you have a key? Set env var `MOCK_MODE=1` (shows a clearly labelled fake result), remove it later.
-
-## If something fails
-| Message on site | Meaning / fix |
-|---|---|
-| "AI server is not set up" | You opened the site from GitHub Pages / a file. Use the Netlify URL. |
-| "missing API key" / "key not working" | Re-check `GEMINI_API_KEY`, redeploy. |
-| "model name is wrong" | Open `...analyze?models=1`, pick a name from the list, set env `GEMINI_MODEL` to it. |
-| "took too long" | Netlify free functions can time out; try a smaller screenshot or retry. |
-| "Too many checks" | Free Gemini limit; wait a minute. |
-
-## Honest notes
-- Free Gemini inputs may be used by Google to improve products and read by people. The privacy popup says so. Tell users to hide private details.
-- AI can be wrong. Test with many real screenshots before trusting it.
-- Netlify free plan has a monthly credit cap; the site pauses instead of charging.
-- Other languages are translated only when the user switches to them.
-- Users can also paste the message text (the "Paste Text" tab); it goes through the same function and AI.
+FraudShield is an educational project. Results are generated by AI and may be wrong. Always confirm with your bank's official app or the number printed on your card. It is not legal or financial advice.
