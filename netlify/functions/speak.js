@@ -4,7 +4,7 @@
 // POST { text, lang:'en'|'hn'|'hi' }  -> audio/mpeg
 // GET  ?health=1  -> key set? voice? model?      GET ?voices=1 -> voices you can use
 
-const VOICE = () => process.env.ELEVEN_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'; // "Rachel" (a default ElevenLabs voice)
+const VOICE = () => process.env.ELEVEN_VOICE_ID || 'xccfcojYYGnqTTxwZEDU'; // "Rachel" (a default ElevenLabs voice)
 const MODEL = () => process.env.ELEVEN_MODEL || 'eleven_flash_v2_5';
 const MAX_CHARS = 700; // keeps credits and response size small
 const API = 'https://api.elevenlabs.io/v1';
