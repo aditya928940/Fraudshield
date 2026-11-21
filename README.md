@@ -1,8 +1,20 @@
 # 🛡️ FraudShield
 
-**Check it before you tap.** FraudShield is a scam-message explainer built for India. Upload a screenshot, or paste the text, of a suspicious SMS, WhatsApp message or email. An AI reads it and shows a colour-coded danger flag, explains the tricks the scammer is using in plain words, and tells you what to do next.
+**Check it before you tap.** FraudShield is a scam-message explainer built for India. Upload a screenshot, or paste the text, of a suspicious SMS, WhatsApp message or email. An AI reads it, shows a colour-coded danger flag, explains the tricks in plain words, and **speaks the explanation aloud in a natural voice** in English, Hinglish or Hindi.
 
-> Built as a college hackathon project for educational purposes. Results come from an AI and can be wrong. See [Disclaimer](#disclaimer).
+> Built for a college hackathon (ElevenLabs track). It is an educational project. Results come from an AI and can be wrong. See [Disclaimer](#disclaimer).
+
+## Why a voice?
+
+Many scam victims are elderly people or first-time smartphone users who find long English messages hard to read. FraudShield tells them in their own language, out loud: what the scammer is trying to do, and what to do next.
+
+## How ElevenLabs is used
+
+- Every speaker icon (each explanation point, the steps, the rule to remember, and "Listen to everything") calls **ElevenLabs text-to-speech** through `netlify/functions/speak.js` (served by `server.js`).
+- The model is `eleven_flash_v2_5` (fast and low-cost, supports Hindi). The voice and model can be changed with environment variables.
+- Short lines are grouped into larger pieces for a smoother voice, the next piece is pre-loaded while one plays, and audio is cached in the browser so replaying costs **no** extra credits.
+- The ElevenLabs key stays on the server. It is never sent to the browser.
+- If ElevenLabs is unavailable (no key, no credits, network), the page falls back to the device's own voice and shows a short notice.
 
 ## Features
 
@@ -17,10 +29,10 @@
   | 51–75 | 🟠 Orange | High risk |
   | 76–100 | 🔴 Red | Scam alert |
 
-- **Explains the psychology**: points out the exact lines that carry fake urgency, fake authority, fake links, greed bait and so on, in simple language.
+- **Voice by ElevenLabs**: listen to the whole explanation or any single part.
+- **Explains the psychology**: points out the exact lines that carry fake urgency, fake authority, fake links, greed bait and so on.
+- **3 languages**: English, Hinglish and हिन्दी. The choice is remembered. The AI answers in one language and translates others only when you switch (saves free quota).
 - **Try-it demos**: four ready-made examples, one per flag level. They run in your browser and do not use the AI.
-- **3 languages**: English, Hinglish and हिन्दी. The choice is remembered. The AI answers in one language and translates others only when you switch (saves the free quota).
-- **Voice explanations**: a speaker icon next to each explanation reads it aloud (Web Speech API).
 - **Common scams library**: India-style sample scams (bank KYC/APK, courier fee, fake job, Prime renewal, fake Windows popup, electricity SMS) with filter tabs.
 - **Emergency steps** and **What NOT to do** after a scam (call **1930**, report on **cybercrime.gov.in**, **Sanchar Saathi**).
 - **Privacy** and **Terms** pop-ups.
@@ -30,59 +42,33 @@
 
 ```
 Browser (index.html, js/app.js, js/ai.js)
-        │  screenshot (compressed) or pasted text
-        ▼
-Netlify Function  netlify/functions/analyze.js   ← holds the secret GEMINI_API_KEY
-        │
-        ▼
-Google Gemini API  →  JSON result  →  shown as the result card
+   │ screenshot (compressed) or pasted text            │ explanation text
+   ▼                                                   ▼
+/.netlify/functions/analyze                     /.netlify/functions/speak
+(holds GEMINI_API_KEY)                          (holds ELEVENLABS_API_KEY)
+   │                                                   │
+   ▼                                                   ▼
+Google Gemini  → JSON result → result card      ElevenLabs TTS → mp3 → played in browser
 ```
 
-The API key lives **only** on the server (a Netlify environment variable). It is never in the browser or in this repository.
+Both functions are run by `server.js` on **Render**. (The folder is called `netlify/functions` and the URLs start with `/.netlify/functions/` only because of the file layout; nothing needs Netlify.) The keys live only in Render's environment variables, never in the browser or this repository.
 
-## Setup (about 15 minutes, no cost)
+## Setup
 
-1. **Get a Gemini key**: go to <https://aistudio.google.com/apikey>, sign in and click **Create API key**. Do **not** enable billing. Copy the key.
-2. **Put this folder on GitHub.** The `.gitignore` keeps `.env` out. Never paste your key into any file in the repo.
-3. **Deploy on Netlify**: sign up free at <https://app.netlify.com> with GitHub, choose **Add new project → Import from GitHub**, pick this repo and deploy. The settings in `netlify.toml` are picked up automatically.
-4. **Add the key**: *Project configuration → Environment variables* → add `GEMINI_API_KEY` with your key (tick "Contains secret values"). Then go to **Deploys → Trigger deploy → Deploy project without cache**. A variable only takes effect on a **new** deploy.
-5. **Test**:
-   - Open `https://YOUR-SITE.netlify.app/.netlify/functions/analyze?health=1`. You should see `"keySet":true`.
-   - Open the site, then upload a screenshot or use **Paste Text**.
+### 1. Get the keys
 
-### Environment variables
+- **Gemini**: <https://aistudio.google.com/apikey> → *Create API key*. Do **not** enable billing.
+- **ElevenLabs**: elevenlabs.io → *Profile → API keys* → *Create key*. Give it **Text to Speech: Access** (and optionally **Voices: Read** to list voices). Everything else can stay on "No Access". Keep "Auto-disable if leaked" on and "Restrict by IP" off.
 
-| Name | Required | What it does |
-|---|---|---|
-| `GEMINI_API_KEY` | yes | Your Gemini key |
-| `GEMINI_MODEL` | no | Model name. Default `gemini-flash-lite-latest` |
-| `MOCK_MODE` | no | Set to `1` to return a clearly labelled **fake** result (to test the setup without a key). Remove it afterwards |
-| `AI_TIMEOUT_MS` | no | Max wait for the AI. Default `9500` |
-| `ALLOWED_ORIGIN` | no | Which website may call the function. Default `*` |
+Copy each key immediately (it is shown only once) and paste it only into Render's environment variables.
 
-See `.env.example`. Only use a local `.env` for testing, and never upload it.
+### 2. Put this folder on GitHub
 
-### Helper links (add to your site address)
+The `.gitignore` keeps `.env` out. Never paste a key into any file in the repo.
 
-- `/.netlify/functions/analyze?health=1` shows whether the key is set and which model is used.
-- `/.netlify/functions/analyze?models=1` lists the models your key can use.
+### 3. Deploy on Render
 
-
-## Voice by ElevenLabs
-
-The speaker buttons use **ElevenLabs** text-to-speech for a natural voice in English, Hinglish and Hindi. The browser sends the explanation text to `netlify/functions/speak.js`, which calls ElevenLabs with a secret key and returns an mp3. Short lines are grouped, the next part is pre-loaded while one plays, and replays come from a cache (no extra credits). If ElevenLabs is unavailable, the page falls back to the device's own voice.
-
-| Env variable | Required | What it does |
-|---|---|---|
-| `ELEVENLABS_API_KEY` | yes (for the AI voice) | Your ElevenLabs key |
-| `ELEVEN_VOICE_ID` | no | Voice to use. Default: a built-in ElevenLabs voice. List yours at `/.netlify/functions/speak?voices=1` |
-| `ELEVEN_MODEL` | no | Default `eleven_flash_v2_5` (fast, cheap, supports Hindi) |
-
-Check it: `/.netlify/functions/speak?health=1` should show `"keySet":true`.
-
-## Deploy on Render 
-
-`server.js` is a tiny Node server (no packages) that serves the site and runs the same two functions. Create a **New Web Service** from your GitHub repo and use:
+`server.js` is a tiny Node server (no packages) that serves the site and runs the same two functions. Create a **New Web Service** from your GitHub repo:
 
 | Field | Value |
 |---|---|
@@ -94,41 +80,77 @@ Check it: `/.netlify/functions/speak?health=1` should show `"keySet":true`.
 | Instance type | Free |
 | Health Check Path | `/healthz` |
 
-Environment variables: `GEMINI_API_KEY`, `ELEVENLABS_API_KEY` (and optionally `AI_TIMEOUT_MS=25000`, `ELEVEN_VOICE_ID`). Render has no 10-second function limit, so the longer timeout is safe.
+Under **Environment Variables** add the ones in the table below (also set `AI_TIMEOUT_MS=25000`; Render has no 10-second function limit), then click **Deploy web service**. After changing a variable, Render redeploys automatically.
 
-Note: on Render's free plan the service **sleeps after about 15 minutes without visitors** and takes up to a minute to wake. Open the site once before a demo.
+On Render's free plan the service **sleeps after about 15 minutes without visitors** and takes up to a minute to wake. Open the site once before a demo.
+
+### Environment variables
+
+| Name | Required | What it does |
+|---|---|---|
+| `GEMINI_API_KEY` | yes | Your Gemini key |
+| `ELEVENLABS_API_KEY` | yes, for the AI voice | Your ElevenLabs key |
+| `ELEVEN_VOICE_ID` | no | Which voice to use (see [Change the voice](#change-the-voice)) |
+| `ELEVEN_MODEL` | no | Default `eleven_flash_v2_5`. Use `eleven_multilingual_v2` for higher quality (uses more credits) |
+| `GEMINI_MODEL` | no | Default `gemini-flash-lite-latest` |
+| `AI_TIMEOUT_MS` | no | Max wait for Gemini. Default `9500`; use `25000` on Render |
+| `MOCK_MODE` | no | `1` returns a clearly labelled **fake** analysis, to test the setup without a key. Remove afterwards |
+| `ALLOWED_ORIGIN` | no | Which website may call the functions. Default `*` |
+
+See `.env.example`. Use a local `.env` only for testing, and never upload it.
+
+### 4. Check that it works
+
+Replace `YOUR-SITE` with your site address:
+
+- `https://YOUR-SITE/.netlify/functions/analyze?health=1` → should show `"keySet":true`
+- `https://YOUR-SITE/.netlify/functions/speak?health=1` → should show `"keySet":true`
+- Open the site, check a message, then press a speaker icon.
+
+Other helper links: `analyze?models=1` lists Gemini models your key can use; `speak?voices=1` lists the ElevenLabs voices on your account.
+
+## Change the voice
+
+1. Find a voice ID: open `https://YOUR-SITE/.netlify/functions/speak?voices=1`, or in elevenlabs.io open **Voices**, add one to *My Voices* and choose **Copy Voice ID**. For Hindi and Hinglish pick a multilingual voice and listen first.
+2. Add the environment variable `ELEVEN_VOICE_ID` with that ID in Render (*Environment* tab → *Add Environment Variable* → Save).
+3. Open `.../speak?health=1`; the `voice` field should show the new ID.
+
+Some library voices are not available through the API on the free ElevenLabs plan. If a voice stays silent (the site then uses the device voice), choose one from *My Voices* or a built-in voice.
 
 ## If something goes wrong
 
 | Message on the site | What to do |
 |---|---|
-| "AI server is not set up on this website" | You opened the site from a file or GitHub Pages. Use the Netlify address. |
-| "missing API key" / "key is not working" | Check `GEMINI_API_KEY`, then redeploy without cache. |
-| "model name is wrong" | Open `?models=1`, pick a name from the list, set it as `GEMINI_MODEL`, redeploy. |
-| "took too long" | Free Netlify functions have a short time limit. Retry or use a smaller screenshot. |
+| "AI server is not set up on this website" | You opened the site from a file or GitHub Pages. Use your Render address (`...onrender.com`). |
+| "missing API key" / "key is not working" | Check `GEMINI_API_KEY` in Render's *Environment* tab and save (Render redeploys). |
+| "model name is wrong" | Open `analyze?models=1`, pick a name, set it as `GEMINI_MODEL` in Render. |
+| "took too long" | Retry or use a smaller screenshot. Make sure `AI_TIMEOUT_MS=25000` is set. If the site was asleep, the first check can be slow. |
 | "Too many checks" | Free Gemini limit reached. Wait a minute. |
 | "does not look like a message" | The image was not a message or chat. Upload the message screenshot. |
+| "AI voice is not available right now" | ElevenLabs key missing, wrong permission (needs *Text to Speech*), or out of credits. The device voice is used instead. |
 
 ## Run it locally
 
-The demos and page work by simply opening `index.html`, but the AI needs the Netlify function. To test it locally:
-
 ```bash
-npm install -g netlify-cli
-cp .env.example .env      # then put your key inside .env
-netlify dev               # opens http://localhost:8888
+cp .env.example .env                  # put your keys inside .env (never upload it)
+node --env-file=.env server.js        # needs Node 20.6 or newer; opens http://localhost:10000
 ```
+
+On an older Node, or on Windows PowerShell, set the keys for one session instead:
+`$env:GEMINI_API_KEY="..."; $env:ELEVENLABS_API_KEY="..."; node server.js`
 
 ## Project structure
 
 ```
 fraudshield/
 ├── index.html                  # page markup
-├── netlify.toml                # tells Netlify where the function is
-├── .env.example                # example settings (copy to .env locally)
+├── server.js                   # tiny Node server (used on Render / locally)
+├── package.json                # tells Render how to start
+├── .env.example                # example settings
 ├── .gitignore                  # keeps .env and keys out of GitHub
 ├── netlify/functions/
-│   └── analyze.js              # server: calls Gemini, validates the answer
+│   ├── analyze.js              # Gemini: reads the message, scores it, validates the answer
+│   └── speak.js                # ElevenLabs: text in, voice (mp3) out
 ├── css/style.css               # custom styles
 └── js/
     ├── tailwind-config.js      # Tailwind theme
@@ -137,28 +159,30 @@ fraudshield/
     │   ├── scams.js            # Common Scams cards
     │   └── legal.js            # Privacy and Terms text
     ├── i18n.js                 # English / Hinglish / Hindi text
-    ├── ai.js                   # browser side: shrinks image, calls the function
-    └── app.js                  # app logic: tabs, language, voice, results, pop-ups
+    ├── ai.js                   # browser side: shrinks image, calls analyze
+    └── app.js                  # tabs, language, voice playback, results, pop-ups
 ```
 
 Where to change things:
 - Demo messages and flag colours: `js/data/demos.js`
 - Scam cards: `js/data/scams.js`
-- How the AI judges messages (the prompt and scoring rules): `RUBRIC` in `netlify/functions/analyze.js`
+- How the AI judges messages (prompt and scoring rules): `RUBRIC` in `netlify/functions/analyze.js`
+- Voice settings (stability, speed): `voice_settings` in `netlify/functions/speak.js`
 - Translations: `js/i18n.js`
 - Site colours and fonts: `js/tailwind-config.js`
 
 ## Tech stack
 
-Plain HTML, CSS and JavaScript (no build step) · [Tailwind CSS](https://tailwindcss.com) via CDN · Netlify Functions (Node) · Google Gemini API · Web Speech API.
+Plain HTML, CSS and JavaScript (no build step) · [Tailwind CSS](https://tailwindcss.com) via CDN · Node (`server.js`) · Google Gemini API · ElevenLabs text-to-speech API.
 
 ## Privacy and honest notes
 
 - Uploaded screenshots and pasted text are sent to Google's Gemini AI to be read. This site does not store them. On Google's **free** tier, inputs may be used to improve Google products and may be reviewed by people, so **hide card numbers, OTPs and personal details before uploading or pasting**.
-- The demo buttons never leave your browser.
+- When you press a speaker icon, the explanation text (written by the AI) is sent to ElevenLabs to create the audio.
+- The demo buttons never leave your browser, except that listening to them also uses ElevenLabs.
 - AI can be wrong. A "Safe" result is not a guarantee. Test with many real messages before relying on it.
-- The Netlify free plan has a monthly usage cap. When it is reached the site pauses instead of charging you.
-- Browser voice depends on the voices installed on the device. Some devices have no Hindi voice.
+- Free plans have limits (Gemini requests, ElevenLabs credits, Render free instance). When they run out the site shows an error or uses the device voice instead of charging you.
+- The device-voice fallback depends on voices installed on the device. Some devices have no Hindi voice.
 
 ## If you are scammed in India
 
