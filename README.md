@@ -80,7 +80,7 @@ The speaker buttons use **ElevenLabs** text-to-speech for a natural voice in Eng
 
 Check it: `/.netlify/functions/speak?health=1` should show `"keySet":true`.
 
-## Deploy on Render (instead of Netlify)
+## Deploy on Render 
 
 `server.js` is a tiny Node server (no packages) that serves the site and runs the same two functions. Create a **New Web Service** from your GitHub repo and use:
 
